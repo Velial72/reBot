@@ -18,6 +18,8 @@ from tools.functions import message_send_photo, callback_send_photo
 from dialogs.start_module import AdminSG, start_dialog
 from dialogs.create_game import create_game_dialog
 from dialogs.payment import payment_dialog
+from dialogs.my_groups import my_group_dialog
+from dialogs.registration import RegistrationSG, registration_dialog
 
 env = Env()
 env.read_env()
@@ -49,55 +51,43 @@ group_data = {
 }
 
 
-# Common_handlers.py
-
-
-class PlayerSG(StatesGroup):
-    start = State()
-
-
-# async def create_game(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
-#     await dialog_manager.start(state=CreateGameSG.start)
-
-
 @dp.message(CommandStart())
-# @dp.message(Command(commands=['start']))
+@dp.message(Command(commands=['start']))
 async def start_command(message: Message, dialog_manager: DialogManager):
-    # if ' ' in message.text:
-    #     game_id = int(message.text.split(" ")[-1])
-    #     try:
-    #         game_id == group_data['game_id']
-    #     except:
-    #         await message.answer("Данная игра уже недоступна!")
-    #     if Player.objects.filter(
-    #             telegram_id=message.from_user.id, game=game).exists():
-    #         await message.answer("Вы уже зарегистрированы на эту игру")
-    #         return
-    #     text_message = LEXICON['game'].format(
-    #
-    #                      game.name,
-    #                      game.start_date,
-    #                      game.end_date,
-    #                      game.description
-    #     )
-    #     await message.answer(text=text_message)
-    #     await asyncio.sleep(1)
-    #     await message.answer(text=LEXICON['user_name'])
-    #     await state.set_state(FSMUserForm.user_name)
-    # else:
-    #     await message_send_photo(message, 's-bot.jpg')
-    #     await message.answer(text=LEXICON['greeting'],
-    #                          reply_markup=create_inline_kb())
-    await message_send_photo(message, 's-bot.jpg')
-    await message.answer(text=LEXICON['greeting'])
-    await asyncio.sleep(0.5)
-
-    await dialog_manager.start(state=AdminSG.start, mode=StartMode.RESET_STACK)
+    if ' ' in message.text:
+        game_id = int(message.text.split(" ")[-1])
+        try:
+            game_id == 123
+        except:
+            await message.answer("Данная игра уже недоступна!")
+        #    if Player.objects.filter(
+        #             telegram_id=message.from_user.id, game=game).exists():
+        #         await message.answer("Вы уже зарегистрированы на эту игру")
+        #         return
+        #     text_message = LEXICON['game'].format(
+        #
+        #                      game.name,
+        #                      game.start_date,
+        #                      game.end_date,
+        #                      game.description
+        #     )
+        #     await message.answer(text=text_message)
+        #     await asyncio.sleep(1)
+        #     await message.answer(text=LEXICON['user_name'])
+        #     await state.set_state(FSMUserForm.user_name)
+        await dialog_manager.start(state=RegistrationSG.name, mode=StartMode.RESET_STACK)
+    else:
+        await message_send_photo(message, 's-bot.jpg')
+        await message.answer(text=LEXICON['greeting'])
+        await asyncio.sleep(0.2)
+        await dialog_manager.start(state=AdminSG.start, mode=StartMode.RESET_STACK)
 
 
 dp.include_routers(start_dialog,
                    create_game_dialog,
                    payment_dialog,
+                   my_group_dialog,
+                   registration_dialog
                    )
 setup_dialogs(dp)
 dp.run_polling(bot)
